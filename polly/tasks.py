@@ -1,10 +1,18 @@
-import celery
-import os
-app = celery.Celery('example')
+# Create your tasks here
+from __future__ import absolute_import, unicode_literals
+from celery import shared_task
 
-app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
-@app.task
+@shared_task
 def add(x, y):
     return x + y
+
+
+@shared_task
+def mul(x, y):
+    return x * y
+
+
+@shared_task
+def xsum(numbers):
+    return sum(numbers)

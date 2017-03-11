@@ -1,2 +1,2 @@
 web: gunicorn heartext.wsgi
-worker: celery worker --app=polly.tasks.app
+worker: celery worker --app=heartext.celery.app

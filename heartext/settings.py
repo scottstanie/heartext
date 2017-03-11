@@ -29,6 +29,7 @@ DEBUG = True
 # Application definition
 
 INSTALLED_APPS = [
+    'heartext.apps.HeartextConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,6 +89,7 @@ if DEBUG:
 else:
     DATABASES = {'default': dj_database_url.config()}
 
+AUTH_USER_MODEL = 'heartext.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

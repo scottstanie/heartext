@@ -30,6 +30,8 @@ DEBUG = True
 
 INSTALLED_APPS = [
     'heartext.apps.HeartextConfig',
+    'django_extensions',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

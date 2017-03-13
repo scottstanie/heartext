@@ -30,6 +30,8 @@ DEBUG = True
 
 INSTALLED_APPS = [
     'heartext.apps.HeartextConfig',
+    'polly',
+
     'django_extensions',
 
     'django.contrib.admin',
@@ -144,3 +146,4 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # CELERY_REDIS_URL = 'redis://'
 # CELERY_RESULT_BACKEND = 'redis://'
+CELERY_IMPORTS = ('heartext.tasks', 'polly.tasks')

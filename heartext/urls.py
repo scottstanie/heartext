@@ -20,5 +20,7 @@ import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^polly/', include('polly.urls', namespace="polly")),
-    url(r'^$', views.index, name="index")
+    url(r'^$', views.index, name="index"),
+    url(r'^convert/?$', views.convert, name="convert"),
+    url(r'^parse/?$', views.convert, name="parse"),
 ]

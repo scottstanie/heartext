@@ -3,6 +3,26 @@
 {% block body %}
 
 <div class="container">
-    <h2>Hello!</h2>
+  <h2>Hello!</h2>
+  <div class="row">
+    Enter URL to grab text
+    <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-btn">
+          <button id="input-url-btn" class="btn btn-default" type="button">Go!</button>
+        </span>
+        <input id="input-url" type="text" class="form-control" placeholder="URL for text">
+
+      </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+  </div><!-- /.row -->
+  <br>
+  <div class="row">
+    Text goes here to convert to MP3, or use URL above
+    <textarea id="text-input" class="form-control" rows="3"></textarea>
+  </div>
+
 </div>
+
+
 {% endblock %}

@@ -59,6 +59,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'heartext.urls'
+APPEND_SLASH = True
 
 TEMPLATES = [
     {

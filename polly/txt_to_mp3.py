@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import subprocess
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from boto3 import Session
 from botocore.exceptions import ClientError
 import nltk.data
@@ -70,6 +71,8 @@ class Converter(object):
 
     TODO: speedup sound?
     """
+    concurrency = 8
+
     def __init__(self, lines, debug=True, path='.', output_name='tmp.mp3'):
         self.lines = lines
         self.debug = debug
@@ -118,7 +121,15 @@ class Converter(object):
             f.write(response_stream.read())
 
     def run(self):
-        [self.write_text_chunk(chunk, idx) for idx, chunk in enumerate(self.lines)]
+        with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
+            future_to_chunk_num = {
+                executor.submit(self.write_text_chunk, chunk, index): index
+                for index, chunk in enumerate(self.lines)
+            }
+            for future in as_completed(future_to_chunk_num):
+                index = future_to_chunk_num[future]
+                future.result()
+                print "Completed %s" % index
 
         self.combine_outputs()
         self.cleanup_dir()

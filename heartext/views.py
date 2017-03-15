@@ -11,9 +11,7 @@ def index(request):
 
 
 def parse(request):
-    """Converts a block of text into an mp3
-
-    Text is sent as JSON through request.POST
+    """Gets the URL submitted and returns the text from it
     """
     body = json.loads(request.body)
     input_url = body.get('url')
@@ -36,7 +34,9 @@ def parse(request):
 
 
 def convert(request):
-    """Gets the URL submitted and returns the text from it
+    """Converts a block of text into an mp3
+
+    Text is sent as JSON through request.POST
     """
     return JsonResponse({"OK": True})
 

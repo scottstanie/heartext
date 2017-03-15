@@ -17,6 +17,13 @@ $(document).ready(function() {
         fetchTextAndInsert(inputUrl);
     });
 
+    $('#submit-text').on('click', function() {
+        var inputText = $('#text-input').val();
+
+        console.log("Submitting text")
+        submitText(inputText);
+    });
+
 
 });
 
@@ -32,6 +39,16 @@ function fetchTextAndInsert(url) {
             console.log("Success getting", url);
             $('#text-input').val(data.text);
         }
+    });
+}
+
+function submitText(text) {
+    var $post = $.ajax({
+        type: 'POST',
+        url: '/convert/',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify({ text: text }),
     });
 }
 

@@ -28,7 +28,6 @@ def parse(request):
     encoded_url = urllib.quote_plus(input_url)
     response = requests.get(api_url.format(input_url=encoded_url),
                             params=request_params)
-    print response.text
 
     return JsonResponse({"OK": True, "text": response.text})
 
@@ -38,6 +37,10 @@ def convert(request):
 
     Text is sent as JSON through request.POST
     """
+    body = json.loads(request.body)
+    text = body.get('text')
+    print 'CONVERTING'
+    print text
     return JsonResponse({"OK": True})
 
 

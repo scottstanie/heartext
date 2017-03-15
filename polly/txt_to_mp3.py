@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Module containiner functions to parse input text and convert to speech
+
+
+"""
 from __future__ import unicode_literals
 
 import subprocess
@@ -79,7 +83,7 @@ class Converter(object):
         # TODO: make sure path gets final slash stripped
         # TODO: use the os library better
         self.path = path
-        self.output_name = '%s/%s' % (path, output_name)
+        self.temp_file_format = '{}/tmpoutput_'.format(path)
 
     def _synth_speech(self, input_text):
         return polly.synthesize_speech(
@@ -117,7 +121,7 @@ class Converter(object):
 
         response_stream = self.convert_text(line)
 
-        with open('tmpoutput_%s' % idx, 'w') as f:
+        with open(self.temp_file_format + idx, 'w') as f:
             f.write(response_stream.read())
 
     def run(self):
@@ -131,21 +135,33 @@ class Converter(object):
                 future.result()
                 print "Completed %s" % index
 
-        self.combine_outputs()
-        self.cleanup_dir()
+
+class OutputHandler(object):
+    """Takes the temporary files and processes into final output
+
+    Handles the cleanup of temporary files, may have several options
+    of where to store or send final mp3 data
+    """
+    def __init__(self, temp_file_format, path='.', output_name='tmp.mp3'):
+        self.temp_file_format = temp_file_format
+        self.output_name = '%s/%s' % (path, output_name)
 
     def combine_outputs(self):
-        """List the output files in numerical order,
-        and combine them into one using cat"""
+        """List the output files in numerical order, and combine them into one"""
         print 'Output file:', self.output_name
-        cat_command = 'cat $(ls %s/tmpoutput_* | sort -n -t "_" -k 2) > "%s"' % \
-            (self.path, self.output_name.replace("'", ''))
+        cat_command = 'cat $(ls %s* | sort -n -t "_" -k 2) > "%s"' % \
+            (self.temp_file_format, self.output_name.replace("'", ''))
         subprocess.check_call(cat_command, shell=True)
 
     def cleanup_dir(self):
-        # Cleanup the tmp files
+        """Cleanup the tmp files"""
         rm_command = 'rm -f %s/tmpoutput_*' % self.path
         subprocess.check_call(rm_command, shell=True)
+
+    def run(self):
+        self.combine_outputs()
+        self.cleanup_dir()
+
 
 
 if __name__ == '__main__':
@@ -162,3 +178,4 @@ What's clearly not OK is taking it further--charging different services differen
     ih = InputHandler(sample_text)
     converter = Converter(lines=ih.lines, debug=True)
     converter.run()
+    oh = OutputHandler(temp_file_format=converter.temp_file_format)

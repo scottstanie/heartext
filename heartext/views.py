@@ -9,7 +9,8 @@ def index(request):
     return render(request, 'heartext/index.html')
 
 
-def convert(request):
+
+def parse(request):
     """Converts a block of text into an mp3
 
     Text is sent as JSON through request.POST
@@ -34,7 +35,7 @@ def convert(request):
     return JsonResponse({"OK": True, "text": response.text})
 
 
-def parse(request):
+def convert(request):
     """Gets the URL submitted and returns the text from it
     """
     return JsonResponse({"OK": True})

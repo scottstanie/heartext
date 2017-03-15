@@ -25,6 +25,10 @@ class InputHandler(object):
         self.debug = debug
         self.lines = self.format_lines(text)
 
+    @property
+    def num_lines(self):
+        return len(self.lines)
+
     def _surround(self, line, tag='p'):
         return "<speak><{tag}>{line}</{tag}></speak>".format(line=line, tag=tag)
 
@@ -80,6 +84,19 @@ class Converter(object):
         # TODO: use the os library better
         self.path = path
         self.output_name = '%s/%s' % (path, output_name)
+        self._lines_completed = set()
+
+    @property
+    def num_lines(self):
+        return len(self.lines)
+
+    @property
+    def num_complete(self):
+        return len(self._lines_completed)
+
+    @property
+    def percent_finished(self):
+        return len(self.lines)
 
     def _synth_speech(self, input_text):
         return polly.synthesize_speech(
@@ -128,8 +145,11 @@ class Converter(object):
             }
             for future in as_completed(future_to_chunk_num):
                 index = future_to_chunk_num[future]
+                # Call for result to run, even though return type is None
                 future.result()
+                self._lines_completed.add(index)
                 print "Completed %s" % index
+                print "Total: %s out of %s complete" % (self.num_complete, self.num_lines)
 
         self.combine_outputs()
         self.cleanup_dir()

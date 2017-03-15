@@ -1,3 +1,6 @@
+import json
+import requests
+import urllib
 from django.shortcuts import render
 from django.http import JsonResponse  # HttpResponse, HttpResponseRedirect
 
@@ -11,7 +14,24 @@ def convert(request):
 
     Text is sent as JSON through request.POST
     """
-    return JsonResponse({"OK": True})
+    body = json.loads(request.body)
+    input_url = body.get('url')
+    print 'Extracting: ', input_url
+
+    api_url = 'http://boilerpipe-web.appspot.com/extract?url={input_url}'
+
+    request_params = {
+        'extractor': 'ArticleExtractor',
+        'output': 'text',
+        'extractImages': '',
+    }
+
+    encoded_url = urllib.quote_plus(input_url)
+    response = requests.get(api_url.format(input_url=encoded_url),
+                            params=request_params)
+    print response.text
+
+    return JsonResponse({"OK": True, "text": response.text})
 
 
 def parse(request):

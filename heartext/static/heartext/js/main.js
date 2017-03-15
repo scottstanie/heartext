@@ -10,11 +10,11 @@ $(document).ready(function() {
     });
 
 
-    $('#input-url-button').on('click', function() {
-        var inputUrl = $('#input-url').data('grocery-id');
+    $('#input-url-btn').on('click', function() {
+        var inputUrl = $('#input-url').val();
 
-        console.log('input url', input-url);
-        fetchTextAndInsert(url);
+        console.log('input url', inputUrl);
+        fetchTextAndInsert(inputUrl);
     });
 
 
@@ -22,15 +22,15 @@ $(document).ready(function() {
 
 
 function fetchTextAndInsert(url) {
-    var $get = $.ajax({
+    var $post = $.ajax({
         type: 'POST',
         url: '/parse/',
-        contentType: 'application/json',
+        contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify(url),
+        data: JSON.stringify({ url: url }),
         success: function(data) {
             console.log("Success getting", url);
-            $('#text-input').val(data);
+            $('#text-input').val(data.text);
         }
     });
 }

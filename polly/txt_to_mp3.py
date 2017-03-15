@@ -5,9 +5,15 @@ from __future__ import unicode_literals
 import subprocess
 from boto3 import Session
 from botocore.exceptions import ClientError
+import nltk.data
 
 session = Session(profile_name="personal")
 polly = session.client("polly")
+
+
+def split_into_sentences(text):
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    return tokenizer.tokenize(text)
 
 
 class InputHandler(object):
@@ -19,13 +25,13 @@ class InputHandler(object):
         self.debug = debug
         self.lines = self.format_lines(text)
 
-    def _surround(self, line):
-        return '<speak>%s</speak>' % line
+    def _surround(self, line, tag='p'):
+        return "<speak><{tag}>{line}</{tag}></speak>".format(line=line, tag=tag)
 
     def _silence(self, seconds):
         """Add a short silence, used to avoid abrupt start or end
         """
-        self._surround('<break time="{}s"/>'.format(seconds))
+        return self._surround('<break time="{}s"/>'.format(seconds))
 
     def _start(self):
         """Short silence at end of text for smoothness
@@ -40,7 +46,7 @@ class InputHandler(object):
     def format_lines(self, raw_text):
         """Takes the raw text and produces SSML formatted list of lines
         """
-        lines = [self._surround(line) for line in raw_text.splitlines() if line]
+        lines = [self._surround(line) for line in raw_text.splitlines()]
         return [self._start()] + lines + [self._end()]
 
 
@@ -93,6 +99,7 @@ class Converter(object):
     def write_text(self, line, idx):
         if self.debug:
             print line
+            print '-----' * 10
 
         response_stream = self.convert_text(line)
 
@@ -156,5 +163,5 @@ We need to make our voices heard.  We won this fight once before, and we can wi
 What's clearly not OK is taking it further--charging different services different rates based on their relationships with ISPs.  You wouldn't accept your electric company charging you different rates depending on the manufacturer of each of your appliances."""
 
     ih = InputHandler(sample_text)
-    converter = Converter(lines=ih.lines)
+    converter = Converter(lines=ih.lines, debug=True)
     converter.run()

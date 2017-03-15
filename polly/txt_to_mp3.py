@@ -11,15 +11,14 @@ session = Session(profile_name="personal")
 polly = session.client("polly")
 
 
-def split_into_sentences(text):
-    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-    return tokenizer.tokenize(text)
-
-
 class InputHandler(object):
     """Takes in raw text and produces a list of sentences
 
     Handles the splitting and SSML tags to ready for speech conversion"""
+
+    request_limit = 1450  # AWS refuses anything bigger than 1500, add padding
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+
     def __init__(self, text, debug=True):
         self.text = text
         self.debug = debug
@@ -43,10 +42,26 @@ class InputHandler(object):
         """
         return self._silence(2)
 
+    def _check_length(self, lines):
+        good_lines = []
+        for line in lines:
+            if len(line) < self.request_limit:
+                good_lines.append(line)
+            else:
+                good_lines.extend(self.split_into_sentences(line))
+
+        return good_lines
+
+    def split_into_sentences(self, text):
+        return self.tokenizer.tokenize(text)
+
     def format_lines(self, raw_text):
         """Takes the raw text and produces SSML formatted list of lines
+
+        Runs the _check_length function on the raw line split in order to
+        break up lines longer than the AWS limit
         """
-        lines = [self._surround(line) for line in raw_text.splitlines()]
+        lines = [self._surround(line) for line in self._check_length(raw_text.splitlines())]
         return [self._start()] + lines + [self._end()]
 
 
@@ -85,18 +100,14 @@ class Converter(object):
         try:
             response = self._synth_speech(line)
         except ClientError as e:
+            print "Error making _synth_speech call:"
             print e
             print 'Input text length: ', len(line)
             print line
-            # TODO: handle split and combine correctly
-            # print 'Trying to split...'
-            # sentences = _divide_input(input_text)
-            # for sentence in sentences:
-            #     response = _synth_speech
 
         return response['AudioStream']
 
-    def write_text(self, line, idx):
+    def write_text_chunk(self, line, idx):
         if self.debug:
             print line
             print '-----' * 10
@@ -107,32 +118,7 @@ class Converter(object):
             f.write(response_stream.read())
 
     def run(self):
-
-        current_conversion_text = ''
-        idx = 0
-        while True:
-            try:
-                next_text = self.lines[idx]
-            except IndexError:
-                print 'Done!'
-                break
-
-            if len(current_conversion_text) + len(next_text) > 1500:
-                # If the combination would be too big, write first,
-                # then have the next iteration start with next_text
-                self.write_text(current_conversion_text, idx)
-                current_conversion_text = next_text
-            else:
-                # If the addition is small enough, synth them in one request
-                current_conversion_text += next_text
-                self.write_text(current_conversion_text, idx)
-                current_conversion_text = ''
-
-            idx += 1
-
-        # Don't forget the final leftovers
-        if current_conversion_text:
-            self.write_text(current_conversion_text, idx)
+        [self.write_text_chunk(chunk, idx) for idx, chunk in enumerate(self.lines)]
 
         self.combine_outputs()
         self.cleanup_dir()

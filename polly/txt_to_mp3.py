@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from argparse import ArgumentParser
 import subprocess
 from boto3 import Session
 from botocore.exceptions import ClientError
@@ -22,24 +22,40 @@ class InputHandler(object):
     def _surround(self, line):
         return '<speak>%s</speak>' % line
 
-    def _end_text(self, seconds=2):
+    def _silence(self, seconds):
+        """Add a short silence, used to avoid abrupt start or end
+        """
+        self._surround('<break time="{}s"/>'.format(seconds))
+
+    def _start(self):
+        """Short silence at end of text for smoothness
+        """
+        return self._silence(0.5)
+
+    def _end(self):
         """Final silence at end of text to not break abruptly
         """
-        return self._surround('<break time="{}s"/>'.format(seconds))
+        return self._silence(2)
 
     def format_lines(self, raw_text):
         """Takes the raw text and produces SSML formatted list of lines
         """
         lines = [self._surround(line) for line in raw_text.splitlines() if line]
-        return lines + [self._end_text()]
+        return [self._start()] + lines + [self._end()]
 
 
 class Converter(object):
     """Goes through each snippet of text and converts to mp3
 
+    TODO: speedup sound?
     """
-    def __init__(self, lines, debug=True, path='./'):
+    def __init__(self, lines, debug=True, path='.', output_name='tmp.mp3'):
         self.lines = lines
+        self.debug = debug
+        # TODO: make sure path gets final slash stripped
+        # TODO: use the os library better
+        self.path = path
+        self.output_name = '%s/%s' % (path, output_name)
 
     def _synth_speech(self, input_text):
         return polly.synthesize_speech(
@@ -111,20 +127,21 @@ class Converter(object):
         if current_conversion_text:
             self.write_text(current_conversion_text, idx)
 
-        output_name = self.path.replace('.txt', '.mp3')
-        print 'Output file:', output_name
-        combine_outputs(output_name)
+        self.combine_outputs()
+        self.cleanup_dir()
 
+    def combine_outputs(self):
+        """List the output files in numerical order,
+        and combine them into one using cat"""
+        print 'Output file:', self.output_name
+        cat_command = 'cat $(ls %s/tmpoutput_* | sort -n -t "_" -k 2) > "%s"' % \
+            (self.path, self.output_name.replace("'", ''))
+        subprocess.check_call(cat_command, shell=True)
 
-def combine_outputs(output_name):
-    """List the output files in numerical order,
-    and combine them into one using cat"""
-    cat_command = 'cat $(ls tmpoutput_* | sort -n -t "_" -k 2) > "%s"' % output_name.replace("'", '')
-    subprocess.check_call(cat_command, shell=True)
-
-    # Cleanup the tmp files
-    rm_command = 'rm -f ./tmpoutput_*'
-    subprocess.check_call(rm_command, shell=True)
+    def cleanup_dir(self):
+        # Cleanup the tmp files
+        rm_command = 'rm -f %s/tmpoutput_*' % self.path
+        subprocess.check_call(rm_command, shell=True)
 
 
 if __name__ == '__main__':
@@ -138,6 +155,6 @@ We need to make our voices heard.  We won this fight once before, and we can wi
 [1] There's an argument that Internet Service Providers should be able to charge a metered rate based on usage.  I'm not sure whether I agree with this, but in principle it seems ok.  That's how we pay for public utilities.
 What's clearly not OK is taking it further--charging different services different rates based on their relationships with ISPs.  You wouldn't accept your electric company charging you different rates depending on the manufacturer of each of your appliances."""
 
-    ih = InputHandler()
+    ih = InputHandler(sample_text)
     converter = Converter(lines=ih.lines)
     converter.run()

@@ -148,3 +148,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # CELERY_REDIS_URL = 'redis://'
 # CELERY_RESULT_BACKEND = 'redis://'
 CELERY_IMPORTS = ('heartext.tasks', 'polly.tasks')
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')

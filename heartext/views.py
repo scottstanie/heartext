@@ -9,7 +9,6 @@ def index(request):
     return render(request, 'heartext/index.html')
 
 
-
 def parse(request):
     """Gets the URL submitted and returns the text from it
     """
@@ -30,18 +29,6 @@ def parse(request):
                             params=request_params)
 
     return JsonResponse({"OK": True, "text": response.text})
-
-
-def convert(request):
-    """Converts a block of text into an mp3
-
-    Text is sent as JSON through request.POST
-    """
-    body = json.loads(request.body)
-    text = body.get('text')
-    print 'CONVERTING'
-    print text
-    return JsonResponse({"OK": True})
 
 
 def pdf_to_text(pdf_document):

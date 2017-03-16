@@ -45,10 +45,14 @@ function fetchTextAndInsert(url) {
 function submitText(text) {
     var $post = $.ajax({
         type: 'POST',
-        url: '/convert/',
+        url: '/polly/convert/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         data: JSON.stringify({ text: text }),
+        success: function(data) {
+            console.log("Success converting, now downloading");
+            window.location.href = '/polly/download/'
+        }
     });
 }
 

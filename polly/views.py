@@ -14,7 +14,7 @@ def convert(request):
     text = body.get('text')
     ih = InputHandler(text)
     print('CONVERTING')
-    print(text[:100] + '...')
+    print(text[:100].encode('utf-8') + '...')
     converter = Converter(lines=ih.lines, debug=True)
     converter.run()
     return JsonResponse({"OK": True})

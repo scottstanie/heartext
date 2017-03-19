@@ -21,8 +21,10 @@ lxml==3.7.3
 nltk==3.2.2
 olefile==0.44
 packaging==16.8
+pdfminer==20140328
 Pillow==4.0.0
 psycopg2==2.6.2
+pydub==0.18.0
 pyparsing==2.2.0
 python-dateutil==2.6.0
 python-pptx==0.6.4

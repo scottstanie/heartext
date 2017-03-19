@@ -26,7 +26,7 @@ def convert(request):
     if speed > 1:
         print "Speeding up by %s" % speed
         song = AudioSegment.from_mp3(mp3_filename)
-        sped_up = speedup(song, playback_speed=1.25)
+        sped_up = speedup(song, playback_speed=speed)
         # Overwrite (possibly should do different, then swap names)
         print "Done speeding"
         print "Writing final file"

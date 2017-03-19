@@ -18,10 +18,10 @@ $(document).ready(function() {
     });
 
     $('#submit-text').on('click', function() {
-        var inputText = $('#text-input').val();
-
-        console.log("Submitting text")
-        submitText(inputText);
+        let inputText = $('#text-input').val();
+        let speedFactor = $('#speed-up-factor').val();
+        console.log("Submitting text");
+        submitText(inputText, speedFactor);
     });
 
     $('#upload-file-name').on('change', function() {
@@ -72,13 +72,13 @@ function fetchTextAndInsert(url) {
     });
 }
 
-function submitText(text) {
+function submitText(text, speedFactor=1) {
     var $post = $.ajax({
         type: 'POST',
         url: '/polly/convert/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ text: text }),
+        data: JSON.stringify({ text: text, speed: speedFactor }),
         success: function(data) {
             console.log("Success converting, now downloading");
             window.location.href = '/polly/download/'

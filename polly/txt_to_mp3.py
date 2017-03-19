@@ -159,6 +159,10 @@ class Converter(object):
             f.write(response_stream.read())
 
     def run(self):
+        """Converts the input text to mp3 snippets in chunks, writes to file
+
+        Returns:
+            output_name (str) the filename of the written mp3"""
         with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
             future_to_chunk_num = {
                 executor.submit(self.write_text_chunk, chunk, index): index
@@ -174,6 +178,7 @@ class Converter(object):
 
         self.combine_outputs()
         self.cleanup_dir()
+        return self.output_name
 
     def combine_outputs(self):
         """List the output files in numerical order,

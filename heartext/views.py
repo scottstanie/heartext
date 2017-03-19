@@ -14,22 +14,24 @@ def index(request):
     return render(request, 'heartext/index.html')
 
 
+# TODO: the server will be overwriting files that users submit
 def upload(request):
-    def _handle_uploaded_file(f, filename='tmp.pdf'):
+    def _handle_uploaded_file(file_, filename='tmp.pdf'):
         """Write the submitted file to a temporary pdf"""
         with open(filename, 'wb+') as destination:
-            for chunk in f.chunks():
+            for chunk in file_.chunks():
                 destination.write(chunk)
-    f = request.FILES.get('file')
-    if not f:
+
+    user_file = request.FILES.get('file')
+    if not user_file:
         return JsonResponse({"OK": False})
 
-    if f.content_type != 'application/pdf':
+    if user_file.content_type != 'application/pdf':
         print "Can only handle PDF files right now"
         return JsonResponse({"OK": False})
 
     filename = 'tmp.pdf'
-    _handle_uploaded_file(f, filename)
+    _handle_uploaded_file(user_file, filename)
     out_text = extract_pdf(filename)
     # Save the output text file for now to analyze
     with open(filename.replace('.pdf', '.txt'), 'w') as f:

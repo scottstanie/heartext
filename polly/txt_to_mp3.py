@@ -25,15 +25,29 @@ class InputHandler(object):
 
     request_limit = 1450  # AWS refuses anything bigger than 1500, add padding
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    replacement_chars = (
+        ('&', ' and '),
+        ('<', ' less than '),
+        ('>', ' greater than'),
+        ('  ', ' '),
+    )
 
     def __init__(self, text, debug=True):
-        self.text = text
+        self.text = self._replace_bad_characters(text)
         self.debug = debug
-        self.lines = self.format_lines(text)
+        self.lines = self.format_lines(self.text)
 
     @property
     def num_lines(self):
         return len(self.lines)
+
+    def _replace_bad_characters(self, text):
+        """Removes characters that would make SSML invalid
+
+        Iterates through the text and replaces instances of the
+        left replacement tuple item with the right"""
+        return reduce(lambda text_char, tup: text_char.replace(tup[0], tup[1]),
+                      self.replacement_chars, text)
 
     def _surround(self, line, tag='p'):
         return "<speak><{tag}>{line}</{tag}></speak>".format(line=line, tag=tag)
@@ -130,6 +144,7 @@ class Converter(object):
             print e
             print 'Input text length: ', len(line)
             print line
+            return
 
         return response['AudioStream']
 

@@ -47,7 +47,10 @@ $(document).ready(function() {
         cache: false,
         contentType: false,
         processData: false,
-
+        success: function(data) {
+            console.log("Success uploading file");
+            $('#text-input').val(data.text);
+        }
     });
 });
 

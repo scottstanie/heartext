@@ -24,6 +24,33 @@ $(document).ready(function() {
         submitText(inputText);
     });
 
+    $('#upload-file-name').on('change', function() {
+        let file = this.files[0];
+        if (file.size > 1000000) {
+            alert('max upload size is 1MB')
+        }
+
+        // Also see .name, .type
+    });
+
+    $('#upload-button').on('click', function() {
+    $.ajax({
+        // Your server script to process the upload
+        url: '/upload/',
+        type: 'POST',
+
+        // Form data
+        data: new FormData($('#upload-form')[0]),
+
+        // Tell jQuery not to process data or worry about content-type
+        // You *must* include these options!
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+});
+
 
 });
 

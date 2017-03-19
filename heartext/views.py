@@ -12,6 +12,12 @@ def index(request):
     return render(request, 'heartext/index.html')
 
 
+def upload(request):
+    print request.FILES
+    print request.POST
+    return JsonResponse({"OK": True})
+
+
 def parse(request):
     """Gets the URL submitted and returns the text from it
     """

@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^polly/', include('polly.urls', namespace="polly")),
     url(r'^$', views.index, name="index"),
     url(r'^parse/?$', views.parse, name="parse"),
+    url(r'^upload/?$', views.upload, name="upload"),
 ]

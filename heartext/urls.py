@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^$', views.index, name="index"),
     url(r'^parse/?$', views.parse, name="parse"),
     url(r'^upload/?$', views.upload, name="upload"),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
 ]

@@ -12,6 +12,7 @@ class User(AbstractUser):
 class Snippet(models.Model):
     s3_client = session.resource('s3')
     bucket = s3_client.Bucket('heartext')
+    s3_base_url = "https://s3.amazonaws.com/heartext"
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # The URL that the text was pulled from
@@ -20,9 +21,13 @@ class Snippet(models.Model):
     text = models.TextField()
     created_by = models.ForeignKey(User)
     created_at = models.DateTimeField('date created', auto_now_add=True)
-    # The S3 URL where the audio is stored
-    audio_url = models.URLField(blank=True)
+
+    @property
+    def s3_url(self):
+        """The S3 URL where the audio is stored
+        """
+        return "%s/%s.mp3" % (self.s3_base_url, self.uuid)
 
     def upload_to_s3(self, filename):
         with open(filename, 'rb') as f:
-            self.bucket.put_object(Key='%s.mp3' % self.uuid, Body=f)
+            self.bucket.put_object(Key=self.s3_url, Body=f)

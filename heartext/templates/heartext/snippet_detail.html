@@ -1,0 +1,56 @@
+{% extends "heartext/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="page-header">
+      <h1>{{object.title}}    <span><a href="{% url 'snippet-update' uuid=object.uuid %}"><button type="button" class="btn btn-warning">Edit</button>
+            </a></span></h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="playlist-info col-md-7 col-md-offset-1">
+      <p>created by {{object.created_by}}</p>
+
+      <h4>Description:</h4>
+      <p>{{object.description | linebreaks }}<p>
+      <p>Source url: {{object.source_url }}<p>
+      <!-- <div class="tag thumbs">
+        {% for t in object.tags.all %}
+          <div class="col-md-2">
+              <a href="{% url 'tag-detail' t.id %}"><button class="btn btn-md btn-default" style="background-color:{{t.color}}; border:none">{{ t.name }}</button></a>
+          </div>
+        {% endfor %}
+      </div> -->
+    </div>
+
+
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <h4>Playlists with this snippet:</h4>
+    </div>
+  </div>
+  <div class="snippets row">
+    <div class="col-md-10 col-md-offset-1">
+      {% for i in object.playlist_set.all %}
+        <div class="col-sm-4 col-md-3">
+          <div class="playlist">
+            <a href="{% url 'playlist-detail' i.id %}"><p>{{ i }}</p></a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="full-text row">
+    <p>{{object.text | linebreaks }}<p>
+  </div>
+
+</div>
+
+{% endblock %}

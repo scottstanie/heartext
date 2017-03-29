@@ -1,0 +1,48 @@
+{% extends "heartext/layout.html" %}
+
+{% block body %}
+
+<form action="" method="post">{% csrf_token %}
+  <div class="fieldWrapper">
+    {{ form.title.errors }}
+    {{ form.title.label_tag }}
+    {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+    {% endif %}
+    {{ form.title }}
+  </div>
+  <div class="fieldWrapper">
+    {{ form.description.errors }}
+    {{ form.description.label_tag }}
+    {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+    {% endif %}
+    {{ form.description }}
+  </div>
+  <div class="fieldWrapper">
+    {{ form.snippets.errors }}
+    {{ form.snippets.label_tag }}
+    {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+    {% endif %}
+    {{ form.snippets }}
+  </div>
+
+<!--
+  <div class="fieldWrapper">
+    {{ form.tags.errors }}
+    {{ form.tags.label_tag }}
+    {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+    {% endif %}
+    {{ form.tags }}
+  </div>
+   -->
+  <br><br>
+  <!-- End select2 multiple fields -->
+  <input type="submit" value="Submit" />
+
+</form>
+
+{% endblock %}
+

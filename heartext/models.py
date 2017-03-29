@@ -20,6 +20,7 @@ class Snippet(models.Model):
     bucket = s3_client.Bucket('heartext')
     s3_base_url = "https://s3.amazonaws.com/heartext"
 
+    title = models.CharField(max_length=200, null=True, blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # The URL that the text was pulled from
     source_url = models.URLField(null=True, blank=True)

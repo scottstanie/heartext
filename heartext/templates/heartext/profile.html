@@ -3,18 +3,24 @@
 {% block body %}
 
 <div class="container">
-  <h2>Hello, {{ request.user.username }}!</h2>
+  <h2>Welcome back, {{ request.user.username }}!</h2>
+  Here are your saved Snippets:
+  {% for snippet in snippets %}
   <div class="row">
-    Here are your saved Snippets:
-    {% for snippet in snippets %}
-    <ul>
-	    <li>{{snippet.url}}</li>
-	    <li>{{snippet.text}}</li>
-	    <li>{{snippet.created_at}}</li>
-	    <li>{{snippet.s3_url}}</li>
-    </ul>
-    {% endfor %}
+    {% if snippet.title %}
+    <div class="col-lg-4">Title: {{snippet.title}}</div>
+    {% endif %}
+    {% if snippet.source_url %}
+    <div class="col-lg-4">
+      URL: <a href="{{snippet.source_url}}">{{snippet.source_url}}</a>
+      </div>
+    {% endif %}
+    <div class="col-lg-4">Created_at: {{snippet.created_at}} UTC</div>
+    <div class="col-lg-4"><a href="{{snippet.s3_url}}">S3 link</a></div>
+    <div class="col-lg-4">Text: {{snippet.text}}</div>
   </div><!-- /.row -->
+  <br>
+  {% endfor %}
 
 
 

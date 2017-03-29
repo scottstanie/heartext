@@ -43,17 +43,6 @@ def convert(request):
     return JsonResponse({"OK": True, "url": snippet.s3_url})
 
 
-def song_upload(request):
-    body = json.loads(request.body)
-    text = body.get('text')
-    url = body.get('url')
-    fsock = open('%s/tmp.mp3' % BASE_DIR, 'rb')
-    response = HttpResponse(fsock)
-    response.content_type = 'audio/mpeg'
-    response['Content-Disposition'] = "attachment; filename=tmp.mp3"
-    return response
-
-
 def song_download(request):
     fsock = open('%s/tmp.mp3' % BASE_DIR, 'rb')
     response = HttpResponse(fsock)

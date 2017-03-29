@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.http import JsonResponse  # HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
+from .models import Snippet, User
 
 @ensure_csrf_cookie
 def index(request):
@@ -87,4 +88,6 @@ def parse(request):
 
 
 def profile(request):
-    return render(request, 'heartext/profile.html')
+    snippets = Snippet.objects.filter(created_by=request.user).order_by('-created_at')
+    context = {'snippets': snippets}
+    return render(request, 'heartext/profile.html', context)

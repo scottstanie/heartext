@@ -87,7 +87,7 @@ function submitText(text, url, speedFactor=1) {
         url: '/polly/convert/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ text: text, speed: speedFactor }),
+        data: JSON.stringify({ text: text, speed: speedFactor, url: url }),
         success: function(data) {
             console.log("Success converting, uplaoded to s3");
             console.log(data.url);

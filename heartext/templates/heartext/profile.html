@@ -1,0 +1,24 @@
+{% extends "heartext/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  <h2>Hello, {{ request.user.username }}!</h2>
+  <div class="row">
+    Here are your saved Snippets:
+    {% for snippet in snippets %}
+    <ul>
+	    <li>{{snippet.url}}</li>
+	    <li>{{snippet.text}}</li>
+	    <li>{{snippet.created_at}}</li>
+	    <li>{{snippet.s3_url}}</li>
+    </ul>
+    {% endfor %}
+  </div><!-- /.row -->
+
+
+
+</div>
+
+
+{% endblock %}

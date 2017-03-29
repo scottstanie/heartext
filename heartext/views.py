@@ -86,6 +86,5 @@ def parse(request):
     return JsonResponse({"OK": True, "text": _read()})
 
 
-
-def pdf_to_text(pdf_document):
-    pass
+def profile(request):
+    return render(request, 'heartext/profile.html')

@@ -21,8 +21,8 @@ class Snippet(models.Model):
     bucket = s3_client.Bucket(settings.AWS_BUCKET_NAME)
     s3_base_url = "https://s3.amazonaws.com/heartext"
 
-    title = models.CharField(max_length=200, null=True, blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=200, null=True, blank=True)
     # The URL that the text was pulled from
     source_url = models.URLField(null=True, blank=True)
     # Original text gets populated from the source_url
@@ -44,7 +44,7 @@ class Snippet(models.Model):
         return reverse('snippet-detail', args=[str(self.id)])
 
     def __unicode__(self):
-        return self.title or self.uuid
+        return self.title or str(self.uuid)
 
 
 class Playlist(models.Model):

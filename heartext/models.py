@@ -1,8 +1,9 @@
 import uuid
+from boto3 import Session
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from polly.txt_to_mp3 import session
+from heartext import settings
 
 
 class User(AbstractUser):
@@ -10,6 +11,11 @@ class User(AbstractUser):
 
 
 class Snippet(models.Model):
+    session = Session(
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name='us-east-1',
+    )
     s3_client = session.resource('s3')
     bucket = s3_client.Bucket('heartext')
     s3_base_url = "https://s3.amazonaws.com/heartext"

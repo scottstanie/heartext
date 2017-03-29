@@ -80,7 +80,10 @@ def parse(request):
     input_url = body.get('url')
     print 'Extracting: ', input_url
 
-    r = requests.get(input_url)
+    r = requests.get(input_url,
+                     headers={'User-agent': 'Mozilla/5.0 (X11; Linux x86_64) '
+                                            'AppleWebKit/537.11 (KHTML, like Gecko) '
+                                            'Chrome/23.0.1271.64 Safari/537.11'})
     ext = _get_response_type(r)
     filename = './tmp.{}'.format(ext)
     _download(input_url, filename)

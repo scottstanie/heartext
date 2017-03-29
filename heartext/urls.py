@@ -42,4 +42,9 @@ urlpatterns = [
     url(r'^playlists/(?P<pk>[\d]+)/update/$', views.PlaylistUpdate.as_view(), name='playlist-update'),
     url(r'^playlists/(?P<pk>[\d]+)/delete/?$', views.PlaylistDelete.as_view(), name='playlist-delete'),
     url(r'^playlists/(?P<pk>[\d]+)/?$', views.PlaylistDetail.as_view(), name='playlist-detail'),
+
+    # Generic snippet views
+    url(r'^snippets/(?P<uuid>[^/]+)/update/?$', views.SnippetUpdate.as_view(), name='snippet-update'),
+    url(r'^snippets/(?P<uuid>[^/]+)/delete/?$', views.SnippetDelete.as_view(), name='snippet-delete'),
+    url(r'^snippets/(?P<uuid>[^/]+)/?$', views.SnippetDetail.as_view(), name='snippet-detail'),
 ]

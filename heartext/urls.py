@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from registration.backends.simple.views import RegistrationView
+
+from heartext.forms import CustomUserForm
 import views
 
 urlpatterns = [
@@ -23,5 +27,12 @@ urlpatterns = [
     url(r'^$', views.index, name="index"),
     url(r'^parse/?$', views.parse, name="parse"),
     url(r'^upload/?$', views.upload, name="upload"),
-    url(r'^accounts/', include('registration.backends.simple.urls')),
+    # login / account views
+    url(r'^register/$',
+        RegistrationView.as_view(form_class=CustomUserForm),
+        name='registration_register'),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
+    url(r'^admin/', admin.site.urls),
+    url(r'^', include('registration.backends.simple.urls')),
 ]

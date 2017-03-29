@@ -112,6 +112,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_EXEMPT_URLS = (
+   r'^register/$',
+)
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 

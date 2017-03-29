@@ -111,6 +111,11 @@ class PlaylistDetail(DetailView):
 
 class PlaylistUpdate(UpdateView):
     model = Playlist
+    fields = (
+        'title',
+        'description',
+        'snippets',
+    )
     # form_class = PlaylistModelForm
 
     # This now happens in model "get_absolute_url"
@@ -126,20 +131,58 @@ class PlaylistUpdate(UpdateView):
 
 class PlaylistCreate(CreateView):
     model = Playlist
+    fields = (
+        'title',
+        'description',
+        'snippets',
+    )
     # form_class = PlaylistModelForm
 
     def get_initial(self):
-        myuser = get_object_or_404(User, user=self.request.user)
-        return {'created_by': myuser}
+        # myuser = get_object_or_404(User, user=)
+        return {'created_by': self.request.user}
 
     def form_valid(self, form):
         obj = form.save(commit=False)
-        myuser = get_object_or_404(User, user=self.request.user)
-        obj.created_by = myuser
+        # myuser = get_object_or_404(User, user=)
+        obj.created_by = self.request.user
         obj.save()
         return HttpResponseRedirect(obj.get_absolute_url())
 
 
 class PlaylistDelete(DeleteView):
     model = Playlist
+    success_url = reverse_lazy('profile')
+
+
+class SnippetDetail(DetailView):
+    model = Snippet
+    slug_url_kwarg = 'uuid'
+    slug_field = 'uuid'
+
+    def get_context_data(self, **kwargs):
+        context = super(SnippetDetail, self).get_context_data(**kwargs)
+        return context
+
+
+class SnippetUpdate(UpdateView):
+    model = Snippet
+    slug_url_kwarg = 'uuid'
+    slug_field = 'uuid'
+
+    fields = (
+        'title',
+        'source_url',
+        'text',
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(SnippetUpdate, self).get_context_data(**kwargs)
+        return context
+
+
+class SnippetDelete(DeleteView):
+    model = Snippet
+    slug_url_kwarg = 'uuid'
+    slug_field = 'uuid'
     success_url = reverse_lazy('profile')

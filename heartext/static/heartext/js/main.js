@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 
     $('#input-url-btn').on('click', function() {
-        var inputUrl = $('#input-url').val();
+        let inputUrl = $('#input-url').val();
 
         console.log('input url', inputUrl);
         fetchTextAndInsert(inputUrl);
@@ -19,9 +19,18 @@ $(document).ready(function() {
 
     $('#submit-text').on('click', function() {
         let inputText = $('#text-input').val();
+        let inputUrl = $('#input-url').val();
         let speedFactor = $('#speed-up-factor').val();
         console.log("Submitting text");
-        submitText(inputText, speedFactor);
+        submitText(inputText, inputUrl, speedFactor);
+    });
+
+    $('#save-snippet').on('click', function() {
+        let inputText = $('#text-input').val();
+        let inputUrl = $('#input-url').val();
+
+        console.log("Saving mp3 text");
+        saveSnippet(inputText, inputUrl);
     });
 
     $('#upload-file-name').on('change', function() {
@@ -72,7 +81,7 @@ function fetchTextAndInsert(url) {
     });
 }
 
-function submitText(text, speedFactor=1) {
+function submitText(text, url, speedFactor=1) {
     var $post = $.ajax({
         type: 'POST',
         url: '/polly/convert/',
@@ -80,8 +89,22 @@ function submitText(text, speedFactor=1) {
         dataType: 'json',
         data: JSON.stringify({ text: text, speed: speedFactor }),
         success: function(data) {
+            console.log("Success converting, uplaoded to s3");
+            console.log(data.url);
+            // window.location.href = '/polly/download/'
+        }
+    });
+}
+
+function saveSnippet(text, url) {
+    var $post = $.ajax({
+        type: 'POST',
+        url: '/polly/upload/',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify({ text: text, speed: speedFactor }),
+        success: function(data) {
             console.log("Success converting, now downloading");
-            window.location.href = '/polly/download/'
         }
     });
 }

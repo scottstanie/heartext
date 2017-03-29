@@ -16,7 +16,7 @@ class Snippet(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # The URL that the text was pulled from
-    source_url = models.URLField(blank=True)
+    source_url = models.URLField(null=True, blank=True)
     # Original text gets populated from the source_url
     text = models.TextField()
     created_by = models.ForeignKey(User)
@@ -30,4 +30,4 @@ class Snippet(models.Model):
 
     def upload_to_s3(self, filename):
         with open(filename, 'rb') as f:
-            self.bucket.put_object(Key=self.s3_url, Body=f)
+            self.bucket.put_object(Key="%s.mp3" % str(self.uuid), Body=f)

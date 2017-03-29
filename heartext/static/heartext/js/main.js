@@ -8,7 +8,9 @@ $(document).ready(function() {
             }
         }
     });
-
+    // Turn http:// strings into <a> tags
+    $('p').linkify();
+    $('div').linkify();
 
     $('#input-url-btn').on('click', function() {
         let inputUrl = $('#input-url').val();

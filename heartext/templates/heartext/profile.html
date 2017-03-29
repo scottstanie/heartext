@@ -12,8 +12,8 @@
     {% endif %}
     {% if snippet.source_url %}
     <div class="col-lg-4">
-      URL: <a href="{{snippet.source_url}}">{{snippet.source_url}}</a>
-      </div>
+      URL: {{snippet.source_url}}
+    </div>
     {% endif %}
     <div class="col-lg-4">Created_at: {{snippet.created_at}} UTC</div>
     <a href="{% url 'snippet-detail' snippet.uuid %}"><div class="col-lg-4">Click to see snippet detail</div></a>

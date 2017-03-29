@@ -40,6 +40,12 @@
         <div class="col-sm-4 col-md-3">
           <div class="snippet">
             <a href="{% url 'snippet-detail' i.uuid %}"><p><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>{{ i }}</p></a>
+            <p>Preview:
+              <audio controls>
+                <source src="{{i.s3_url}}" type="audio/mpeg">
+              Your browser does not support the audio element.
+              </audio>
+            </p>
           </div>
         </div>
       {% endfor %}

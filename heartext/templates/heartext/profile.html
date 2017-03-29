@@ -16,8 +16,16 @@
       </div>
     {% endif %}
     <div class="col-lg-4">Created_at: {{snippet.created_at}} UTC</div>
-    <div class="col-lg-4"><a href="{{snippet.s3_url}}">S3 link</a></div>
-    <div class="col-lg-4">Text: {{snippet.text}}</div>
+    <a href="{% url 'snippet-detail' snippet.uuid %}"><div class="col-lg-4">Click to see snippet detail</div></a>
+    <div class="col-lg-4">Preview:
+      <audio controls>
+        <source src="{{snippet.s3_url}}" type="audio/mpeg">
+      Your browser does not support the audio element.
+      </audio>
+    </div>
+    <div class="col-lg-4"><a href="{{snippet.s3_url}}">Download from S3 link</a></div>
+    <br>
+    <!-- <div class="col-lg-4">Text: {{snippet.text}}</div> -->
   </div><!-- /.row -->
   <br>
   {% endfor %}

@@ -20,6 +20,12 @@
       <h4>Description:</h4>
       <p>{{object.description | linebreaks }}<p>
       <p>Source url: {{object.source_url }}<p>
+      <p>Preview:
+        <audio controls>
+          <source src="{{object.s3_url}}" type="audio/mpeg">
+        Your browser does not support the audio element.
+        </audio>
+      </p>
       <!-- <div class="tag thumbs">
         {% for t in object.tags.all %}
           <div class="col-md-2">

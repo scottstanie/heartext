@@ -36,4 +36,10 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('registration.backends.simple.urls')),
+
+    # Generic playlist views
+    url(r'^playlists/create/$', views.PlaylistCreate.as_view(), name='playlist-create'),
+    url(r'^playlists/(?P<pk>[\d]+)/update/$', views.PlaylistUpdate.as_view(), name='playlist-update'),
+    url(r'^playlists/(?P<pk>[\d]+)/delete/?$', views.PlaylistDelete.as_view(), name='playlist-delete'),
+    url(r'^playlists/(?P<pk>[\d]+)/?$', views.PlaylistDetail.as_view(), name='playlist-detail'),
 ]

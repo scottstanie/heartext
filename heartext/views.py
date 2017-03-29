@@ -4,11 +4,17 @@ import subprocess
 import textract
 import mimetypes
 
-from django.shortcuts import render
-from django.http import JsonResponse  # HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse, HttpResponseRedirect  # HttpResponse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.generic.edit import CreateView, ModelFormMixin
+from django.views.generic.detail import DetailView
+# from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView, DeleteView
 
-from .models import Snippet, User
+from .models import Snippet, Playlist, User
+
 
 @ensure_csrf_cookie
 def index(request):
@@ -91,3 +97,49 @@ def profile(request):
     snippets = Snippet.objects.filter(created_by=request.user).order_by('-created_at')
     context = {'snippets': snippets}
     return render(request, 'heartext/profile.html', context)
+
+
+class PlaylistDetail(DetailView):
+    model = Playlist
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaylistDetail, self).get_context_data(**kwargs)
+        # If we need to add extra items to what passes to the template
+        # context['now'] = timezone.now()
+        return context
+
+
+class PlaylistUpdate(UpdateView):
+    model = Playlist
+    # form_class = PlaylistModelForm
+
+    # This now happens in model "get_absolute_url"
+    # def get_success_url(self):
+    #     return reverse('dish-detail', kwargs={'pk': self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaylistUpdate, self).get_context_data(**kwargs)
+        # If we need to add extra items to what passes to the template
+        # context['now'] = timezone.now()
+        return context
+
+
+class PlaylistCreate(CreateView):
+    model = Playlist
+    # form_class = PlaylistModelForm
+
+    def get_initial(self):
+        myuser = get_object_or_404(User, user=self.request.user)
+        return {'created_by': myuser}
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        myuser = get_object_or_404(User, user=self.request.user)
+        obj.created_by = myuser
+        obj.save()
+        return HttpResponseRedirect(obj.get_absolute_url())
+
+
+class PlaylistDelete(DeleteView):
+    model = Playlist
+    success_url = reverse_lazy('profile')

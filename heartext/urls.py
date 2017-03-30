@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^parse/?$', views.parse, name="parse"),
     url(r'^upload/?$', views.upload, name="upload"),
     url(r'^profile/?$', views.profile, name="profile"),
+    url(r'^voice-test/?$', views.voice_test, name="voice-test"),
     # login / account views
     url(r'^register/$',
         RegistrationView.as_view(form_class=CustomUserForm),

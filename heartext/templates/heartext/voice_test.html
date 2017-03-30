@@ -1,0 +1,28 @@
+{% extends "heartext/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  {% for voice in voices %}
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="row">
+      Preview of {{voice.0}}
+      </div>
+      <audio controls>
+        <source src="{{voice.1}}" type="audio/mpeg">
+      Your browser does not support the audio element.
+      </audio>
+    </div>
+    <br>
+    <!-- <div class="col-lg-4">Text: {{snippet.text}}</div> -->
+  </div><!-- /.row -->
+  <br>
+  {% endfor %}
+
+
+
+</div>
+
+
+{% endblock %}

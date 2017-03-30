@@ -22,6 +22,14 @@ def index(request):
     return render(request, 'heartext/index.html', context)
 
 
+def voice_test(request):
+    context = {'voices': []}
+    url = 'https://s3.amazonaws.com/heartext/sample_%s.mp3'
+    for voice_name, voice_pretty in Snippet.voices:
+        context['voices'].append((voice_pretty, url % voice_name.lower()))
+    return render(request, 'heartext/voice_test.html', context)
+
+
 # TODO: the server will be overwriting files that users submit
 def upload(request):
     def _handle_uploaded_file(file_, filename='tmp.pdf'):

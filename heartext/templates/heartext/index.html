@@ -38,7 +38,7 @@
     </select>
 
     <br>
-    Select Voice (test options here)
+    Select Voice <a href="{% url 'voice-test' %}" target="_blank">(test options here)</a>
     <select id="voice-select" class="form-control">
       {% for voice in voices %}
       <option data-voice="{{voice.0}}">{{voice.1}}</option>

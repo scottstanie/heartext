@@ -31,14 +31,24 @@ class Snippet(models.Model):
     created_at = models.DateTimeField('date created', auto_now_add=True)
 
     @property
+    def s3_key(self):
+        return "%s.mp3" % str(self.uuid)
+
+    @property
     def s3_url(self):
         """The S3 URL where the audio is stored
         """
-        return "%s/%s.mp3" % (self.s3_base_url, self.uuid)
+        return "%s/%s" % (self.s3_base_url, self.s3_key)
 
     def upload_to_s3(self, filename):
         with open(filename, 'rb') as f:
-            self.bucket.put_object(Key="%s.mp3" % str(self.uuid), Body=f)
+            self.bucket.put_object(Key=self.s3_key, Body=f)
+
+    def delete_from_s3(self):
+        self.bucket.delete_objects(
+            Delete={'Objects': [{'Key': self.s3_key}],
+                    'Quiet': True},
+        )
 
     def get_absolute_url(self):
         return reverse('snippet-detail', args=[str(self.id)])

@@ -18,7 +18,8 @@ from .models import Snippet, Playlist, User
 
 @ensure_csrf_cookie
 def index(request):
-    return render(request, 'heartext/index.html')
+    context = {'voices': Snippet.voices}
+    return render(request, 'heartext/index.html', context)
 
 
 # TODO: the server will be overwriting files that users submit

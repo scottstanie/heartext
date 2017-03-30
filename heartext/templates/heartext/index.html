@@ -28,12 +28,21 @@
     Text goes here to convert to MP3, or use URL above
     <textarea id="text-input" class="form-control" rows="3"></textarea>
 
+    <br>
     Speed up factor
-    <select id="speed-up-factor" class="form-control">
+    <select id="speed-select" class="form-control">
       <option>1</option>
       <option>1.15</option>
       <option>1.25</option>
       <option>1.5</option>
+    </select>
+
+    <br>
+    Select Voice (test options here)
+    <select id="voice-select" class="form-control">
+      {% for voice in voices %}
+      <option data-voice="{{voice.0}}">{{voice.1}}</option>
+      {% endfor %}
     </select>
     <br>
     <button id="submit-text" class="btn btn-default" role="button">Convert to MP3</button>

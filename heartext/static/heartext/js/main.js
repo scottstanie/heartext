@@ -22,9 +22,10 @@ $(document).ready(function() {
     $('#submit-text').on('click', function() {
         let inputText = $('#text-input').val();
         let inputUrl = $('#input-url').val();
-        let speedFactor = $('#speed-up-factor').val();
+        let voice = $('#voice-select').find('option:selected').data('voice');;
+        let speedFactor = $('#speed-select').val();
         console.log("Submitting text");
-        submitText(inputText, inputUrl, speedFactor);
+        submitText(inputText, inputUrl, voice, speedFactor);
     });
 
     $('#save-snippet').on('click', function() {
@@ -83,13 +84,18 @@ function fetchTextAndInsert(url) {
     });
 }
 
-function submitText(text, url, speedFactor=1) {
+function submitText(text, url, voice, speedFactor=1) {
     var $post = $.ajax({
         type: 'POST',
         url: '/polly/convert/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ text: text, speed: speedFactor, url: url }),
+        data: JSON.stringify({
+          text: text,
+          voice:voice,
+          speed: speedFactor,
+          url: url
+        }),
         success: function(data) {
             console.log("Success converting, uplaoded to s3");
             console.log(data.url);

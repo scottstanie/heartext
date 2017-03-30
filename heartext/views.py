@@ -68,9 +68,9 @@ def parse(request):
         content_type = response.headers.get('content-type')
 
         if 'application/pdf' in content_type:
-            ext = '.pdf'
+            ext = 'pdf'
         elif 'text/html' in content_type:
-            ext = '.html'
+            ext = 'html'
         else:
             ext = ''
             print 'Unknown type: {}'.format(content_type)

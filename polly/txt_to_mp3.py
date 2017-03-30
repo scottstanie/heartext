@@ -132,12 +132,8 @@ class Converter(object):
         )
 
     def _speedup(self, audio_segment):
-        if self.speed == 1:
-            return audio_segment
-        else:
-            print "Speeding up by %s" % self.speed
-            sped_up = speedup(audio_segment, playback_speed=self.speed)
-            return sped_up
+        print "Speeding up by %s" % self.speed
+        return speedup(audio_segment, playback_speed=self.speed)
 
     def convert_text(self, line):
         """Takes input_text, returns object with audio stream
@@ -163,16 +159,21 @@ class Converter(object):
             print '-----' * 10
 
         response_stream = self.convert_text(line)
-        audio_segment = AudioSegment.from_mp3(response_stream)
-
-        try:
-            final_audio_segment = self._speedup(audio_segment)
-        except Exception:
-            # Can throw "segment too short" Exception
-            final_audio_segment = audio_segment
 
         filename = 'tmpoutput_%s' % idx
-        final_audio_segment.export(filename, format='mp3')
+        if self.speed > 1:
+            # Use the pydub library to speed up if needed
+            try:
+                audio_segment = AudioSegment.from_mp3(response_stream)
+                final_audio_segment = self._speedup(audio_segment)
+            except Exception:
+                # Can throw "segment too short" Exception
+                final_audio_segment = audio_segment
+            final_audio_segment.export(filename, format='mp3')
+        else:
+            # Otherwise, don't spend time converting to AudioSegment
+            with open(filename, 'w') as f:
+                f.write(response_stream.read())
 
     def run(self):
         """Converts the input text to mp3 snippets in chunks, writes to file

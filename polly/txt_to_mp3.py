@@ -7,6 +7,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from boto3 import Session
 from botocore.exceptions import ClientError
 import nltk.data
+from pydub import AudioSegment
+from pydub.effects import speedup
+
 
 from heartext import settings
 
@@ -97,12 +100,13 @@ class Converter(object):
     """
     concurrency = 8
 
-    def __init__(self, lines, debug=True, path='.', output_name='tmp.mp3'):
+    def __init__(self, lines, debug=True, path='.', speed=1, output_name='tmp.mp3'):
         self.lines = lines
         self.debug = debug
         # TODO: make sure path gets final slash stripped
         # TODO: use the os library better
         self.path = path
+        self.speed = speed
         self.output_name = '%s/%s' % (path, output_name)
         self._lines_completed = set()
 
@@ -127,8 +131,13 @@ class Converter(object):
             VoiceId='Joanna'
         )
 
-    def _divide_input(input_text):
-        return input_text.split('.')
+    def _speedup(self, audio_segment):
+        if self.speed == 1:
+            return audio_segment
+        else:
+            print "Speeding up by %s" % self.speed
+            sped_up = speedup(audio_segment, playback_speed=self.speed)
+            return sped_up
 
     def convert_text(self, line):
         """Takes input_text, returns object with audio stream
@@ -154,9 +163,16 @@ class Converter(object):
             print '-----' * 10
 
         response_stream = self.convert_text(line)
+        audio_segment = AudioSegment.from_mp3(response_stream)
 
-        with open('tmpoutput_%s' % idx, 'w') as f:
-            f.write(response_stream.read())
+        try:
+            final_audio_segment = self._speedup(audio_segment)
+        except Exception:
+            # Can throw "segment too short" Exception
+            final_audio_segment = audio_segment
+
+        filename = 'tmpoutput_%s' % idx
+        final_audio_segment.export(filename, format='mp3')
 
     def run(self):
         """Converts the input text to mp3 snippets in chunks, writes to file
@@ -206,5 +222,5 @@ We need to make our voices heard.  We won this fight once before, and we can wi
 What's clearly not OK is taking it further--charging different services different rates based on their relationships with ISPs.  You wouldn't accept your electric company charging you different rates depending on the manufacturer of each of your appliances."""
 
     ih = InputHandler(sample_text)
-    converter = Converter(lines=ih.lines, debug=True)
+    converter = Converter(lines=ih.lines, debug=True, speed=1.15)
     converter.run()

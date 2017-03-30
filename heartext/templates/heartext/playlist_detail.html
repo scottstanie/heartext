@@ -40,13 +40,14 @@
   </div>
   <div class="snippets row">
     <div class="col-md-10 col-md-offset-1">
-      {% for i in object.snippets.all %}
+      {% for snippet in object.snippets.all %}
         <div class="col-sm-4 col-md-3">
           <div class="snippet">
-            <a href="{% url 'snippet-detail' i.uuid %}"><p><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>{{ i }}</p></a>
+            <a href="{% url 'snippet-detail' snippet.uuid %}"><p>{{ snippet }}</p></a>
+            <p>Read by: {{snippet.get_voice_display }}<p>
             <p>Preview:
               <audio controls>
-                <source src="{{i.s3_url}}" type="audio/mpeg">
+                <source src="{{snippet.s3_url}}" type="audio/mpeg">
               Your browser does not support the audio element.
               </audio>
             </p>

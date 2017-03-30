@@ -3,6 +3,18 @@
 A way to give some texty, and get back a robot-y MP3
 
 
+## Local setup
+
+    psql -c 'CREATE DATABASE themenu'
+
+
+    mkvirtualenv themenu
+    brew install ffmpeg
+    pip install -r requirements.txt
+    ./manage.py migrate
+    ./manage.py run
+
+
 ### Dependencies:
 
 - ffmpeg

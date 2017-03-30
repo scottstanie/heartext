@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^', include('registration.backends.simple.urls')),
 
     # Generic playlist views
+    url(r'^playlists/$', views.PlaylistList.as_view(), name='playlist-list'),
     url(r'^playlists/create/$', views.PlaylistCreate.as_view(), name='playlist-create'),
     url(r'^playlists/(?P<pk>[\d]+)/update/$', views.PlaylistUpdate.as_view(), name='playlist-update'),
     url(r'^playlists/(?P<pk>[\d]+)/delete/?$', views.PlaylistDelete.as_view(), name='playlist-delete'),

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.edit import CreateView, ModelFormMixin
 from django.views.generic.detail import DetailView
-# from django.views.generic.list import ListView
+from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 
 from .models import Snippet, Playlist, User
@@ -156,6 +156,10 @@ class PlaylistCreate(CreateView):
 class PlaylistDelete(DeleteView):
     model = Playlist
     success_url = reverse_lazy('profile')
+
+
+class PlaylistList(ListView):
+    model = Playlist
 
 
 class SnippetDetail(DetailView):

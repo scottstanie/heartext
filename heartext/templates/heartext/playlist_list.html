@@ -1,0 +1,27 @@
+{% extends "heartext/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  <h2>Public playlists:</h2>
+  {% for playlist in object_list %}
+  <div class="row">
+    {% if playlist.title %}
+    <div class="col-lg-4">Title: {{playlist.title}}</div>
+    {% endif %}
+    <a href="{% url 'playlist-detail' playlist.id %}"><div class="col-lg-4">Click to see playlist detail</div></a>
+    <div class="col-lg-4">Created by: {{playlist.created_by}}</div>
+    <div class="col-lg-4">Created at: {{playlist.created_at}} UTC</div>
+
+    <br>
+    <div class="col-lg-4">Description: {{ playlist.description }}</div>
+  </div><!-- /.row -->
+  <br>
+  {% endfor %}
+
+
+
+</div>
+
+
+{% endblock %}

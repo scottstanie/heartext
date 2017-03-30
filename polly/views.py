@@ -15,6 +15,7 @@ def convert(request):
     body = json.loads(request.body)
     text = body.get('text')
     url = body.get('url')
+    voice = body.get('voice')
     speed = float(body.get('speed'))
 
     user = get_object_or_404(User, id=request.user.id)
@@ -24,7 +25,7 @@ def convert(request):
     ih = InputHandler(text)
     print('CONVERTING')
     print(text[:100].encode('utf-8') + '...')
-    converter = Converter(lines=ih.lines, debug=True, speed=speed)
+    converter = Converter(lines=ih.lines, debug=True, speed=speed, voice=voice)
     mp3_filename = converter.run()
 
     snippet.upload_to_s3(mp3_filename)

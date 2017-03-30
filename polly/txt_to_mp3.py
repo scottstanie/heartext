@@ -100,13 +100,21 @@ class Converter(object):
     """
     concurrency = 8
 
-    def __init__(self, lines, debug=True, path='.', speed=1, output_name='tmp.mp3'):
+    def __init__(self,
+                 lines,
+                 debug=True,
+                 path='.',
+                 speed=1,
+                 voice='Joanna',
+                 output_name='tmp.mp3'):
+
         self.lines = lines
         self.debug = debug
         # TODO: make sure path gets final slash stripped
         # TODO: use the os library better
         self.path = path
         self.speed = speed
+        self.voice = voice
         self.output_name = '%s/%s' % (path, output_name)
         self._lines_completed = set()
 
@@ -128,7 +136,7 @@ class Converter(object):
             # SampleRate='string',
             Text=input_text,
             TextType='ssml',
-            VoiceId='Joanna'
+            VoiceId=self.voice
         )
 
     def _speedup(self, audio_segment):
@@ -223,5 +231,5 @@ We need to make our voices heard.  We won this fight once before, and we can wi
 What's clearly not OK is taking it further--charging different services different rates based on their relationships with ISPs.  You wouldn't accept your electric company charging you different rates depending on the manufacturer of each of your appliances."""
 
     ih = InputHandler(sample_text)
-    converter = Converter(lines=ih.lines, debug=True, speed=1.15)
+    converter = Converter(lines=ih.lines, debug=True, speed=1.15, voice='Raveena')
     converter.run()

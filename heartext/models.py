@@ -12,6 +12,13 @@ class User(AbstractUser):
 
 
 class Snippet(models.Model):
+    voices = (
+        ('Joanna', 'Joanna (US)'),
+        ('Geraint', 'Geraint (Welsch)'),
+        ('Raveena', 'Raveena (Indian)'),
+        ('Kendra', 'Kendra (US)'),
+        ('Amy', 'Amy (British)'),
+    )
     session = Session(
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
@@ -29,6 +36,7 @@ class Snippet(models.Model):
     text = models.TextField()
     created_by = models.ForeignKey(User)
     created_at = models.DateTimeField('date created', auto_now_add=True)
+    voice = models.CharField(max_length=40, choices=voices, default='Joanna')
 
     @property
     def s3_key(self):

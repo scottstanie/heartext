@@ -192,4 +192,8 @@ class SnippetDelete(DeleteView):
     model = Snippet
     slug_url_kwarg = 'uuid'
     slug_field = 'uuid'
-    success_url = reverse_lazy('profile')
+
+    def get_success_url(self):
+        """Deleteing a snippet should remove it from s3"""
+        self.object.delete_from_s3()
+        return reverse('profile')

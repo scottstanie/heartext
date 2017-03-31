@@ -152,8 +152,8 @@ STATICFILES_DIRS = [
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CELERY_REDIS_URL = 'redis://'
-CELERY_RESULT_BACKEND = 'redis://'
+CELERY_REDIS_URL = os.environ['REDIS_URL']
+CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
 CELERY_IMPORTS = ('polly.tasks',)
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')

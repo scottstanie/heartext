@@ -1,18 +1,15 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task
+# from celery import Task, shared_task
+from celery.decorators import task
+from celery.utils.log import get_task_logger
 
 
-@shared_task
-def add(x, y):
-    return x + y
+log = get_task_logger(__name__)
 
 
-@shared_task
-def mul(x, y):
-    return x * y
-
-
-@shared_task
-def xsum(numbers):
-    return sum(numbers)
+@task(name="add")
+def add(a, b):
+    """sends an email when feedback form is filled successfully"""
+    log.info("Adding ")
+    return a + b

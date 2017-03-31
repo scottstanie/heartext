@@ -1,10 +1,10 @@
 import json
-from django.shortcuts import get_object_or_404, render
+# from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 
 from heartext.settings import BASE_DIR
-from txt_to_mp3 import InputHandler, Converter
-from heartext.models import Snippet, User
+# from heartext.models import Snippet, User
+from tasks import convert_snippet_task
 
 
 def convert(request):
@@ -18,18 +18,9 @@ def convert(request):
     voice = body.get('voice')
     speed = float(body.get('speed'))
 
-    user = get_object_or_404(User, id=request.user.id)
-    snippet = Snippet(text=text, created_by=user, source_url=url)
-    snippet.save()
+    convert_snippet_task.delay(text, request.user.id, url, speed, voice)
 
-    ih = InputHandler(text)
-    print('CONVERTING')
-    print(text[:100].encode('utf-8') + '...')
-    converter = Converter(lines=ih.lines, debug=True, speed=speed, voice=voice)
-    mp3_filename = converter.run()
-
-    snippet.upload_to_s3(mp3_filename)
-    return JsonResponse({"OK": True, "url": snippet.s3_url})
+    return JsonResponse({"OK": True})
 
 
 def song_download(request):

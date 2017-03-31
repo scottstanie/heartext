@@ -1,5 +1,5 @@
 # Create your tasks here
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
 # from celery import Task, shared_task
 from celery.decorators import task
 from celery.utils.log import get_task_logger

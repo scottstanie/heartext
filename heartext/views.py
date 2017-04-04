@@ -3,6 +3,7 @@ import requests
 import subprocess
 import textract
 import mimetypes
+import urlparse
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseRedirect  # HttpResponse
@@ -85,8 +86,17 @@ def parse(request):
             print 'Unknown type: {}'.format(content_type)
         return ext
 
-    body = json.loads(request.body)
-    input_url = body.get('url')
+    try:
+        input_url = urlparse.parse_qs(request.body)['url'][0]
+    except KeyError:
+        try:
+            input_url = request.GET['url']
+        except KeyError:
+            print 'Error parsing request:'
+            print 'request.GET', request.GET
+            print 'request.body', request.body
+            input_url = ''
+
     print 'Extracting: ', input_url
 
     r = requests.get(input_url,

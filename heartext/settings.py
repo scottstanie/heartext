@@ -116,6 +116,7 @@ LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_EXEMPT_URLS = (
    r'^register/$',
+   r'^parse/$',
 )
 
 # Internationalization

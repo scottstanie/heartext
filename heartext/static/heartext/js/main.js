@@ -72,11 +72,11 @@ $(document).ready(function() {
 
 function fetchTextAndInsert(url) {
     var $post = $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/parse/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ url: url }),
+        data: { url: url },
         success: function(data) {
             console.log("Success getting", url);
             $('#text-input').val(data.text);

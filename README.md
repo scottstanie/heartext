@@ -10,9 +10,19 @@ A way to give some texty, and get back a robot-y MP3
 
     mkvirtualenv themenu
     brew install ffmpeg
+    brew install redis
     pip install -r requirements.txt
     ./manage.py migrate
-    ./manage.py run
+
+#### Running locally with redis for celery background jobs
+
+In one window, run:
+
+    redis-server
+
+Then in a separate tab, run
+
+    heroku local
 
 
 ### Dependencies:
@@ -33,8 +43,11 @@ Installed from https://code.google.com/archive/p/boilerpipe/downloads
 
 May have followed this: https://github.com/k-bx/boilerpipe/wiki/QuickStart
 
+- redis
 
-New bucket policy to public-read:
+Used for celery task queue and result backend
+
+#### New bucket policy to public-read:
 
 ```python
 s3 = boto3.session.resource('s3')

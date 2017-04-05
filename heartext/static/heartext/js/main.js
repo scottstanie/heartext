@@ -12,6 +12,11 @@ $(document).ready(function() {
     $('p').linkify();
     $('div').linkify();
 
+    $('#playlist-download-btn').on('click', function() {
+        let playlistId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+        downloadPlaylist(playlistId);
+    });
+
     $('#input-url-btn').on('click', function() {
         let inputUrl = $('#input-url').val();
 
@@ -38,7 +43,7 @@ $(document).ready(function() {
     });
 
     $('#upload-button').on('click', function() {
-    $.ajax({
+      $.ajax({
         // Your server script to process the upload
         url: '/upload/',
         type: 'POST',
@@ -60,6 +65,22 @@ $(document).ready(function() {
 
 
 });
+
+function downloadPlaylist(playlistId) {
+    var $dd = $.ajax({
+        type: 'POST',
+        url: '/polly/download_playlist/',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify({
+          playlistId: 1,
+        }),
+        success: function(data) {
+            console.log("Success");
+            window.location.href = '/polly/download_zip/';
+        }
+    });
+}
 
 
 function fetchTextAndInsert(url) {
@@ -97,7 +118,6 @@ function submitText(title, text, url, voice, speedFactor=1) {
           let jobId = data.job_id;
           let refreshId = setInterval(function() {
             $.ajax({
-              // async: false,
               type: 'GET',
               url: '/polly/progress/',
               contentType: 'application/json; charset=utf-8',
@@ -105,8 +125,6 @@ function submitText(title, text, url, voice, speedFactor=1) {
               data: { jobId: jobId },
               success: function(data) {
                 console.log(data);
-                  // progressData = pollProgress(jobId);
-                  // console.log(progressData)
                 $('#progress-bar').attr('style','width: ' + data.pct_done + '%');
                 if (data.state === 'SUCCESS' || data.pct_done >= 100) {
                   clearInterval(refreshId);
@@ -114,13 +132,7 @@ function submitText(title, text, url, voice, speedFactor=1) {
                 }
               }
             });
-            // let progressData = pollProgress(jobId);
-            // console.log(progressData)
-            // if (progressData.pct_done >= 100) {
-            //   clearInterval(refreshId);
-            // }
           }, 500);
-            // window.location.href = '/polly/download/'
         }
     });
 }

@@ -1,3 +1,4 @@
+import re
 import uuid
 from boto3 import Session
 from django.db import models
@@ -47,6 +48,10 @@ class Snippet(models.Model):
         """The S3 URL where the audio is stored
         """
         return "%s/%s" % (self.s3_base_url, self.s3_key)
+
+    @property
+    def filename(self):
+        return re.sub(r'\W+', '', self.title) if self.title else self.s3_key
 
     def upload_to_s3(self, filename):
         with open(filename, 'rb') as f:

@@ -1,11 +1,16 @@
 from __future__ import division
 import json
+from tempfile import NamedTemporaryFile
+import os
+import zipfile
+from wsgiref.util import FileWrapper
 # from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, JsonResponse
+import botocore
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from celery.result import AsyncResult
 
 from heartext.settings import BASE_DIR
-from heartext.models import Snippet, User
+from heartext.models import Snippet, User, Playlist
 import polly.tasks
 
 
@@ -39,6 +44,43 @@ def song_download(request):
     response.content_type = 'audio/mpeg'
     response['Content-Disposition'] = "attachment; filename=tmp.mp3"
     return response
+
+
+def download_playlist(request):
+    body = json.loads(request.body)
+    playlist_id = body.get('playlistId')
+    playlist = Playlist.objects.get(id=playlist_id)
+
+    zipf = zipfile.ZipFile('playlist.zip', 'w', zipfile.ZIP_DEFLATED)
+    for snippet in playlist.snippets.all():
+        print 'ob:', snippet.s3_key, snippet.s3_url
+        # obj = snippet.bucket.Object(snippet.s3_key)
+        with NamedTemporaryFile() as f:
+            try:
+                snippet.bucket.download_file(snippet.s3_key, f.name)
+            except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    print e, snippet.s3_url, 'does not exist'
+                else:
+                    raise
+            # Copies over the temprary file using the key as the
+            # file name in the zip.
+            zipf.write(f.name, snippet.filename)
+
+    zipf.close()
+
+    return JsonResponse({"OK": True})
+
+
+def download_zip(request):
+    print 'DOANLOADING!!!'
+    with open('playlist.zip', 'rb') as zipf:
+        chunk_size = 8192
+        response = HttpResponse(FileWrapper(zipf), chunk_size)
+        response.content_type = 'application/zip'
+        response['Content-Length'] = os.path.getsize(zipf.name)
+        response['Content-Disposition'] = "attachment; filename=%s" % zipf.name
+        return response
 
 
 def progress(request):

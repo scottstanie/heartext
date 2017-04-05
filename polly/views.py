@@ -45,7 +45,7 @@ def song_download(request):
     return response
 
 
-def download_playlist(request, playlist_id):
+def download_playlist(request):
     body = json.loads(request.body)
     playlist_id = body.get('playlistId')
     playlist = Playlist.objects.get(id=playlist_id)

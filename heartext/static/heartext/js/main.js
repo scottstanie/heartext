@@ -94,14 +94,32 @@ function submitText(title, text, url, voice, speedFactor=1) {
           console.log(data);
           console.log("-----")
           let snippetId = data.snippet_id;
-          $('#snippet-link').html('<a href="/snippets/' + snippetId + '/">Success! Click here to see the snippet details</a>');
-          // let jobId = data.job_id;
-          // var refreshId = setInterval(function() {
-          //   let progressData = pollProgress(jobId);
-          //   if (progressData.pct_done >= 100) {
-          //     clearInterval(refreshId);
-          //   }
-          // }, 1000);
+          let jobId = data.job_id;
+          let refreshId = setInterval(function() {
+            $.ajax({
+              // async: false,
+              type: 'GET',
+              url: '/polly/progress/',
+              contentType: 'application/json; charset=utf-8',
+              dataType: 'json',
+              data: { jobId: jobId },
+              success: function(data) {
+                console.log(data);
+                  // progressData = pollProgress(jobId);
+                  // console.log(progressData)
+                $('#progress-bar').attr('style','width: ' + data.pct_done + '%');
+                if (data.state === 'SUCCESS' || data.pct_done >= 100) {
+                  clearInterval(refreshId);
+                  displaySuccess(snippetId);
+                }
+              }
+            });
+            // let progressData = pollProgress(jobId);
+            // console.log(progressData)
+            // if (progressData.pct_done >= 100) {
+            //   clearInterval(refreshId);
+            // }
+          }, 500);
             // window.location.href = '/polly/download/'
         }
     });
@@ -121,6 +139,11 @@ function pollProgress(jobId) {
             return data;
         }
     });
+}
+
+function displaySuccess(snippetId) {
+  $('#snippet-link').html('<a href="/snippets/' + snippetId +
+                          '/">Success! Click here to see the snippet details</a>');
 }
 
 function getCookie(name) {

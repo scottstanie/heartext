@@ -106,7 +106,8 @@ class Converter(object):
                  path='.',
                  speed=1,
                  voice='Joanna',
-                 output_name='tmp.mp3'):
+                 output_name='tmp.mp3',
+                 celery_job=None):
 
         self.lines = lines
         self.debug = debug
@@ -117,6 +118,7 @@ class Converter(object):
         self.voice = voice
         self.output_name = '%s/%s' % (path, output_name)
         self._lines_completed = set()
+        self.celery_job = celery_job
 
     @property
     def num_lines(self):
@@ -200,6 +202,12 @@ class Converter(object):
                 self._lines_completed.add(index)
                 print "Completed %s" % index
                 print "Total: %s out of %s complete" % (self.num_complete, self.num_lines)
+                if self.celery_job:
+                    print 'HERE!!!'
+                    print self.celery_job
+                    self.celery_job.update_state(state='PROGRESS',
+                                                 meta={'current': self.num_complete,
+                                                       'total': self.num_lines})
 
         self.combine_outputs()
         self.cleanup_dir()

@@ -1,10 +1,12 @@
+from __future__ import division
 import json
 # from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
+from celery.result import AsyncResult
 
 from heartext.settings import BASE_DIR
-# from heartext.models import Snippet, User
-from tasks import convert_snippet_task
+from heartext.models import Snippet, User
+import polly.tasks
 
 
 def convert(request):
@@ -18,9 +20,16 @@ def convert(request):
     voice = body.get('voice')
     speed = float(body.get('speed'))
 
-    convert_snippet_task.delay(text, request.user.id, url, speed, voice)
+    user = User.objects.get(id=request.user.id)
+    snippet = Snippet(text=text, created_by=user, source_url=url)
+    snippet.save()
 
-    return JsonResponse({"OK": True})
+    job = polly.tasks.convert_snippet_task.delay(snippet.uuid, text, speed, voice)
+    # job = polly.tasks.do_work.delay()
+
+    return JsonResponse({"OK": True,
+                         "snippet_id": snippet.uuid,
+                         "job_id": job.id})
 
 
 def song_download(request):
@@ -29,3 +38,22 @@ def song_download(request):
     response.content_type = 'audio/mpeg'
     response['Content-Disposition'] = "attachment; filename=tmp.mp3"
     return response
+
+
+def progress(request):
+    """ A view to report the progress to the user """
+    if 'jobId' in request.GET:
+        job_id = request.GET['jobId']
+    else:
+        return JsonResponse({'OK': False, 'message': 'No job id given'})
+
+    job = AsyncResult(job_id)
+    if job.state == 'PROGRESS':
+        pct_done = 100 * job.info['current'] / job.info['total']
+    else:
+        pct_done = 100
+
+    return JsonResponse({'OK': False,
+                         "state": job.state,
+                         'pct_done': pct_done,
+                         'data': job.result})

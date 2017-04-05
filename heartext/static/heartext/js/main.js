@@ -28,20 +28,11 @@ $(document).ready(function() {
         submitText(inputText, inputUrl, voice, speedFactor);
     });
 
-    $('#save-snippet').on('click', function() {
-        let inputText = $('#text-input').val();
-        let inputUrl = $('#input-url').val();
-
-        console.log("Saving mp3 text");
-        saveSnippet(inputText, inputUrl);
-    });
-
     $('#upload-file-name').on('change', function() {
         let file = this.files[0];
         if (file.size > 1000000) {
             alert('max upload size is 1MB')
         }
-
         // Also see .name, .type
     });
 
@@ -97,22 +88,35 @@ function submitText(text, url, voice, speedFactor=1) {
           url: url
         }),
         success: function(data) {
-            console.log("Success converting, uplaoded to s3");
-            console.log(data.url);
+          console.log("converting, uplaoded to s3");
+          console.log(data);
+          console.log("-----")
+          let snippetId = data.snippet_id;
+          $('#snippet-link').html('<a href="/snippets/' + snippetId + '/">Success! Click here to see the snippet details</a>');
+          // let jobId = data.job_id;
+          // var refreshId = setInterval(function() {
+          //   let progressData = pollProgress(jobId);
+          //   if (progressData.pct_done >= 100) {
+          //     clearInterval(refreshId);
+          //   }
+          // }, 1000);
             // window.location.href = '/polly/download/'
         }
     });
 }
 
-function saveSnippet(text, url) {
+function pollProgress(jobId) {
+  // Not implemented yet
     var $post = $.ajax({
-        type: 'POST',
-        url: '/polly/upload/',
+        async: false,
+        type: 'GET',
+        url: '/polly/progress/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify({ text: text, speed: speedFactor }),
+        data: { jobId: jobId },
         success: function(data) {
-            console.log("Success converting, now downloading");
+            console.log(data);
+            return data;
         }
     });
 }

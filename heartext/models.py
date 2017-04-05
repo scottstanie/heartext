@@ -51,7 +51,7 @@ class Snippet(models.Model):
 
     @property
     def filename(self):
-        return re.sub(r'\W+', '', self.title) if self.title else self.s3_key
+        return "%s.mp3" % self.title if self.title else self.s3_key
 
     def upload_to_s3(self, filename):
         with open(filename, 'rb') as f:

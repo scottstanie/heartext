@@ -31,7 +31,6 @@ def convert(request):
     snippet.save()
 
     job = polly.tasks.convert_snippet_task.delay(snippet.uuid, text, speed, voice)
-    # job = polly.tasks.do_work.delay()
 
     return JsonResponse({"OK": True,
                          "snippet_id": snippet.uuid,
@@ -46,12 +45,12 @@ def song_download(request):
     return response
 
 
-def download_playlist(request):
+def download_playlist(request, playlist_id):
     body = json.loads(request.body)
     playlist_id = body.get('playlistId')
     playlist = Playlist.objects.get(id=playlist_id)
 
-    zipf = zipfile.ZipFile('playlist.zip', 'w', zipfile.ZIP_DEFLATED)
+    zipf = zipfile.ZipFile('%s.zip' % playlist.title, 'w', zipfile.ZIP_DEFLATED)
     for snippet in playlist.snippets.all():
         print 'ob:', snippet.s3_key, snippet.s3_url
         # obj = snippet.bucket.Object(snippet.s3_key)
@@ -72,9 +71,10 @@ def download_playlist(request):
     return JsonResponse({"OK": True})
 
 
-def download_zip(request):
-    print 'DOANLOADING!!!'
-    with open('playlist.zip', 'rb') as zipf:
+def download_zip(request, playlist_id):
+    print 'DOWNLOADING!!!'
+    playlist = Playlist.objects.get(id=playlist_id)
+    with open('%s.zip' % playlist.title, 'rb') as zipf:
         chunk_size = 8192
         response = HttpResponse(FileWrapper(zipf), chunk_size)
         response.content_type = 'application/zip'

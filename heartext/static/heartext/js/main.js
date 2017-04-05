@@ -77,7 +77,7 @@ function downloadPlaylist(playlistId) {
         }),
         success: function(data) {
             console.log("Success");
-            window.location.href = '/polly/download_zip/';
+            window.location.href = '/polly/download_zip/' + playlistId + '/';
         }
     });
 }

@@ -15,13 +15,14 @@ def convert(request):
     Text is sent as JSON through request.POST
     """
     body = json.loads(request.body)
+    title = body.get('title')
     text = body.get('text')
     url = body.get('url')
     voice = body.get('voice')
     speed = float(body.get('speed'))
 
     user = User.objects.get(id=request.user.id)
-    snippet = Snippet(text=text, created_by=user, source_url=url)
+    snippet = Snippet(title=title, text=text, created_by=user, source_url=url)
     snippet.save()
 
     job = polly.tasks.convert_snippet_task.delay(snippet.uuid, text, speed, voice)

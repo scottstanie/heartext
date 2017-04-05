@@ -20,12 +20,13 @@ $(document).ready(function() {
     });
 
     $('#submit-text').on('click', function() {
+        let title = $('#snippet-title-input').val();
         let inputText = $('#text-input').val();
         let inputUrl = $('#input-url').val();
         let voice = $('#voice-select').find('option:selected').data('voice');;
         let speedFactor = $('#speed-select').val();
         console.log("Submitting text");
-        submitText(inputText, inputUrl, voice, speedFactor);
+        submitText(title, inputText, inputUrl, voice, speedFactor);
     });
 
     $('#upload-file-name').on('change', function() {
@@ -75,13 +76,14 @@ function fetchTextAndInsert(url) {
     });
 }
 
-function submitText(text, url, voice, speedFactor=1) {
+function submitText(title, text, url, voice, speedFactor=1) {
     var $post = $.ajax({
         type: 'POST',
         url: '/polly/convert/',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         data: JSON.stringify({
+          title: title,
           text: text,
           voice:voice,
           speed: speedFactor,

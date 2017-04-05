@@ -200,11 +200,8 @@ class SnippetUpdate(UpdateView):
         'title',
         'source_url',
         'text',
+        'voice',
     )
-
-    def get_context_data(self, **kwargs):
-        context = super(SnippetUpdate, self).get_context_data(**kwargs)
-        return context
 
 
 class SnippetDelete(DeleteView):

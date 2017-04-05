@@ -28,7 +28,7 @@ $(document).ready(function() {
         let title = $('#snippet-title-input').val();
         let inputText = $('#text-input').val();
         let inputUrl = $('#input-url').val();
-        let voice = $('#voice-select').find('option:selected').data('voice');;
+        let voice = $('#voice-select').find('option:selected').data('voice');
         let speedFactor = $('#speed-select').val();
         console.log("Submitting text");
         submitText(title, inputText, inputUrl, voice, speedFactor);

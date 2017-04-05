@@ -27,7 +27,7 @@ def convert(request):
     speed = float(body.get('speed'))
 
     user = User.objects.get(id=request.user.id)
-    snippet = Snippet(title=title, text=text, created_by=user, source_url=url)
+    snippet = Snippet(title=title, text=text, created_by=user, source_url=url, voice=voice)
     snippet.save()
 
     job = polly.tasks.convert_snippet_task.delay(snippet.uuid, text, speed, voice)

@@ -64,7 +64,7 @@ class Snippet(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse('snippet-detail', args=[str(self.id)])
+        return reverse('snippet-detail', args=[str(self.uuid)])
 
     def __unicode__(self):
         return self.title or str(self.uuid)

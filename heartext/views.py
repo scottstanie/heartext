@@ -169,6 +169,7 @@ class PlaylistCreate(CreateView):
         # myuser = get_object_or_404(User, user=)
         obj.created_by = self.request.user
         obj.save()
+        form.save_m2m()
         return HttpResponseRedirect(obj.get_absolute_url())
 
 

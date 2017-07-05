@@ -5,10 +5,10 @@ A way to give some texty, and get back a robot-y MP3
 
 ## Local setup
 
-    psql -c 'CREATE DATABASE themenu'
+    psql -c 'CREATE DATABASE heartext'
 
 
-    mkvirtualenv themenu
+    mkvirtualenv heartext
     brew install ffmpeg
     brew install redis
     pip install -r requirements.txt
